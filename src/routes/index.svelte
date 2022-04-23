@@ -3,31 +3,37 @@
 </script>
 
 <script lang="ts">
-	import Counter from '$lib/Counter.svelte';
+	import { Editors } from '../data/editors';
+	import { searchString } from '../helpers/string.helper';
+	let input = '';
+
+	$: filteredEditors = Editors.filter(
+		(editor) => searchString(editor.publisher, input) || searchString(editor.name, input)
+	);
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<title>Imaginales - Wanted List</title>
+	<meta name="description" content="Imaginales - Wanted List" />
 </svelte:head>
 
 <section>
-	<h1>
-		<div class="welcome">
-			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
-				<img src="svelte-welcome.png" alt="Welcome" />
-			</picture>
+	<h1>Imaginales</h1>
+	<input type="text" bind:value={input} placeholder="Nom, maison" />
+
+	{#each filteredEditors as editor}
+		<div class="card">
+			{#if editor.picture}
+				<img class="picture" src="pics/{editor.picture}" alt="poi" />
+			{/if}
+			<p>{editor.name}</p>
+			<p class="publisher">{editor.publisher}</p>
+			<p>{editor.position}</p>
+			{#if editor.comment}
+				<p>{editor.comment}</p>
+			{/if}
 		</div>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/index.svelte</strong>
-	</h2>
-
-	<Counter />
+	{/each}
 </section>
 
 <style>
@@ -39,22 +45,26 @@
 		flex: 1;
 	}
 
-	h1 {
-		width: 100%;
+	.card {
+		width: 200px;
+		border: 1px solid black;
+		border-radius: 4px;
+		padding: 10px;
+		margin: 10px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 	}
 
-	.welcome {
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
+	.picture {
+		max-width: 200px;
+		max-height: 200px;
+		border-radius: 4px;
 	}
 
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
+	.publisher {
+		font-weight: bold;
+		font-size: 25px;
 	}
 </style>
